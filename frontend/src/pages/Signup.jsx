@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import TextField from "../components/TextField";
+import TextField from "../components/Login&Signup/TextField";
 import { useNavigate } from "react-router-dom";
+import { AccountContext } from "../context/AccountContext";
 
 const Signup = () => {
+    const {setUser} = useContext(AccountContext)
     const navigate = useNavigate();
+    const [error, setError] = useState()
 
     return (
         <Formik
@@ -42,7 +45,13 @@ const Signup = () => {
                     })
                     .then((data) => {
                         if (!data) return;
-                        console.log(data);
+                        console.log("DATA: ", data)
+                        setUser({...data})
+                        if (data.status) {
+                            setError(data.status)
+                        } else {
+                            navigate("/home")
+                        }
                     });
             }}
         >
@@ -51,6 +60,9 @@ const Signup = () => {
                     onSubmit={formik.handleSubmit}
                     className="max-w-xl max-md:w-11/12 px-4 mx-auto h-screen bg-slate-700 text-sky-200 flex flex-col justify-center"
                 >
+                    <h1 className="text-3xl mb-4 font-semibold text-center">Enter Signup Details:</h1>
+                    <h1 className="text-xl mb-10 text-red-500 font-semibold text-center">{error}</h1>
+
                     <TextField
                         prompt={"Username"}
                         name={"username"}

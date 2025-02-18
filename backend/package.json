@@ -12,11 +12,21 @@
     "license": "ISC",
     "type": "commonjs",
     "dependencies": {
+        "@prisma/client": "^6.3.1",
+        "bcrypt": "^5.1.1",
+        "connect-redis": "^8.0.1",
         "cors": "^2.8.5",
         "express": "^4.21.2",
+        "express-session": "^1.18.1",
         "helmet": "^8.0.0",
+        "ioredis": "^5.5.0",
+        "pg": "^8.13.3",
+        "redis": "^4.7.0",
         "socket": "^0.14.43",
         "socket.io": "^4.8.1",
         "yup": "^1.6.1"
+    },
+    "devDependencies": {
+        "prisma": "^6.3.1"
     }
 }
