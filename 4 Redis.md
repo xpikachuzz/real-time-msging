@@ -84,6 +84,5 @@ module.exports.rateLimiter = (secondLimit, limitAmount) => async (req, res, next
   next()
   // if the response is the ip was added, then 
 }
-
-
 ```
+

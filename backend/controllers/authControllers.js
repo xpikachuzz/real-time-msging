@@ -1,7 +1,7 @@
 const Yup = require("yup");
 const { PrismaClient } = require('@prisma/client')
 const bcrypt = require("bcrypt");
-
+const {v4: uuidv4} = require("uuid")
 
 const prisma = new PrismaClient()
 
@@ -57,7 +57,11 @@ const loginPost = async (req, res) => {
     if (!isSamePass) {
       return res.status(200).json({ loggedIn:false, status: "Username doesn't not exist"})
     } else {
-      req.session.user = {username: potentialUser.username, id: potentialUser.id}
+      req.session.user = {
+        username: potentialUser.username, 
+        id: potentialUser.id,
+        userId: potentialUser.userId
+      }
       res.json({loggedIn: true, username: potentialUser.username})
     }
   }
@@ -85,16 +89,21 @@ const signupPost =  async (req, res) => {
     } else {
       // get hashed password
       const hashedPass = await bcrypt.hash(req.body.password, 10)
-      
+      const userId = uuidv4()
       // create the user
       const result = await prisma.user.create({
         data: {
           username: req.body.username,
-          password: hashedPass
+          password: hashedPass,
+          userId
         }
       })
       // Set the cookie, basically a dictionary in the browser which we define
-      req.session.user = {username: result.username, id: result.id}
+      req.session.user = {
+        username: result.username, 
+        id: result.id,
+        userId
+      }
       res.json({loggedIn: true, username: result.username})
     }
 }

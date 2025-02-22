@@ -8,6 +8,7 @@ function App() {
     const [count, setCount] = useState(0);
 
     localStorage.setItem("dark", true);
+    
 
     return (
         <UserContext>
