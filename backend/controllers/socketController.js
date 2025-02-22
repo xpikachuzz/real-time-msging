@@ -4,6 +4,8 @@ const redisClient = require("../redis")
 
 module.exports.authorizeUser = async (socket, next) => {
   // redisClient.FLUSHALL()
+  console.log(socket.request.session)
+  console.log(socket.request.session.user)
   try {
     if (!socket.request.session || !socket.request.session.user) {
       console.log("BAD REQUEST (authorizeUser)")
