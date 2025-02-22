@@ -1,18 +1,21 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import socket from './../../socket';
 import { AccountContext } from './../../context/AccountContext';
-import { useNavigate } from 'react-router-dom';
 
-export const useSocketSetup = (setFriendList) => {
+export const useSocketSetup = (setFriendList, setMessages) => {
   const {user, setUser} = useContext(AccountContext)
 
   useEffect(() => {
     socket.connect()
     socket.on("friends", friendList => setFriendList(friendList))
+    socket.on("messages", messages => setMessages(messages))
     socket.on("connect_error", (e) => {
       // logout if connection failed
       setUser({loggedIn: false})
       console.log("ERROR: ", e, user)
+    })
+    socket.on("dm", message => {
+      setMessages(prev => [message, ...prev])
     })
     socket.on("connected", (status, username) => {
       setFriendList(prevFriends => {
@@ -30,8 +33,12 @@ export const useSocketSetup = (setFriendList) => {
     // when useEffect stops finishes
     return () => {
       socket.off("connect_error")
+      socket.off("connected")
+      socket.off("friends")
+      socket.off("messages")
+      socket.off("dm")
     }
-  }, [])
+  }, [setFriendList, setMessages, setUser, user])
 }
 
 

@@ -11,7 +11,7 @@ const redisClient = require("./redis")
 const { Server } = require("socket.io");
 const authRouter = require("./routers/auth");
 const { sessionMiddleWare, wrap, corsConfi } = require("./controllers/serverController");
-const { authorizeUser, addFriend, initializeUser, onDisconnect } = require("./controllers/socketController");
+const { authorizeUser, addFriend, initializeUser, onDisconnect, dm } = require("./controllers/socketController");
 
 const app = express();
 
@@ -24,21 +24,21 @@ const server = require("http").createServer(app);
 // 1st arg is what our socketIO will be hosted on
 // 2nd arg has cors
 const io = new Server(server, {
-    cors: { origin: "http://localhost:5173", credentials: true },
+    cors: { origin:process.env.CLIENT_URL, credentials: true },
 });
-
 
 redisClient.connect().catch(console.error)
 
 // security check middleware
 app.use(helmet());
 app.use(sessionMiddleWare)
-app.use(cors({credentials: true, origin: 'http://localhost:5173'}));
+app.use(cors({credentials: true, origin: process.env.CLIENT_URL}));
 // accept json to be like js object
 app.use(express.json());
 
 app.use("/auth", authRouter);
 app.get("/", (req, res) => res.json("HI"));
+app.set('trust proxy', 1)
 
 // w/ this layout first it sets up the shared cookies, then...
 io.use(wrap(sessionMiddleWare))
@@ -52,6 +52,7 @@ io.on("connect", (socket) => {
     socket.on("add_friend", 
         (friendName, cb) => addFriend(socket, friendName, cb)
     )
+    socket.on("dm", (message) => dm(socket, message));
 
     socket.on("disconnecting", () => onDisconnect(socket));
 });

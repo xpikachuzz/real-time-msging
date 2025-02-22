@@ -28,7 +28,7 @@ const Login = () => {
             })}
             // what to run when submitting
             onSubmit={(values, action) => {
-                fetch("http://localhost:3000/auth/login", {
+                fetch(import.meta.env.VITE_BACKEND_URL+"/auth/login", {
                     method: "POST",
                     credentials: "include",
                     headers: {

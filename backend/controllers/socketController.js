@@ -41,8 +41,6 @@ module.exports.initializeUser = async socket => {
     socket.user.userId,
   );
 
-  console.log("AWAIT: ", socket.user.username)
-  console.log(await redisClient.hGet("userid:"+socket.user.username, "connected"))
 
 
   // Get friends
@@ -67,6 +65,17 @@ module.exports.initializeUser = async socket => {
 
   // send to frontend
   socket.emit("friends", parseFList);
+
+  // fetch the messages in the format of to.from.content
+  const messageQuery = await redisClient.lRange("chat:"+socket.user.userId, 0, -1)
+
+  // to.from.content
+  const messages = messageQuery.map(msg => {
+    const [to, from, content] = msg.split(".")
+    return {to, from, content}
+  })
+
+  if (messages && messages.length > 0) socket.emit("messages", messages)
 };
 
 
@@ -116,7 +125,6 @@ module.exports.addFriend = async (socket, friendName, cb) => {
 }
 
 
-
 module.exports.onDisconnect = async (socket) => {
   // on logout you show disconnected
   await redisClient.hSet(
@@ -139,6 +147,26 @@ module.exports.onDisconnect = async (socket) => {
   socket.to(friendRooms).emit("connected", 'false', socket.user.username)
 }
 
+
+module.exports.dm = async (socket, message) => {
+  // add the user's id
+  message.from = socket.user.userId
+  
+  // format it will be stored in: to.fron.content
+  const messageString = [
+    message.to, 
+    message.from, 
+    message.content
+  ].join(".")
+
+  // stack of messages, will be stored of the sender and reciever like this:
+  await redisClient.lPush("chat:"+message.to, messageString)
+  await redisClient.lPush("chat:"+message.from, messageString)
+
+  // the other is identified by their userId which 
+  // is stored in the `to` and `from`
+  socket.to(message.to).emit("dm", message)
+}
 
 
 const parseFriendList = async (friendList) => {

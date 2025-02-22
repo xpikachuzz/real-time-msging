@@ -24,14 +24,14 @@ export const Sidebar = ({chosen, setChosen, setAddFriendForm}) => {
       </div>
       <hr className="dashed text-gray-800 w-11/12 mx-4 mb-8" />
 
-      {friendList.map((row, i) => {console.log("row: ", row); return (
+      {friendList.map((row, i) => (
           <button onClick={() => setChosen(row.username)} key={i} className={`text-2xl rounded-xl flex justify-start gap-4 items-center font-semibold text-left w-full px-6 pt-1 pb-2 mb-3 bg-blue-100/50 ${row===chosen ? "bg-blue-200/50": ""}`}>
             <div className='rounded-full bg-green-500 w-6 h-6 mt-1'></div>
             <h1 className={`${row.username===chosen ? "font-bold": ""}`}>{row.connected}</h1>
             <h1 className={`${row.username===chosen ? "font-bold": ""}`}>{row.username}</h1>
             <h1 className={`${row.username===chosen ? "font-bold": ""}`}>{row.userId}</h1>
           </button>
-        )}
+        )
       )}
     </div>
   )

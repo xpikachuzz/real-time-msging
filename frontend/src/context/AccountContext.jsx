@@ -10,7 +10,7 @@ export const UserContext = ({children}) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetch("http://localhost:3000/auth/login", {
+    fetch(import.meta.env.VITE_BACKEND_URL+"/auth/login", {
       credentials: 'include'
     })
       .catch(err => {
@@ -24,7 +24,6 @@ export const UserContext = ({children}) => {
         return r.json()
       })
       .then(data => {
-        console.log("data: ", data)
         if (!data) {
           setUser({loggedIn: false})
           return
