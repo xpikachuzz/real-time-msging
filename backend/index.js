@@ -37,8 +37,6 @@ app.use(cors({credentials: true, origin: process.env.CLIENT_URL}));
 app.use(express.json());
 
 app.use("/auth", authRouter);
-app.get("/", (req, res) => res.json("HI"));
-app.set('trust proxy', 1)
 
 // w/ this layout first it sets up the shared cookies, then...
 io.use(wrap(sessionMiddleWare))
