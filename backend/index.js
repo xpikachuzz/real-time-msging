@@ -1,7 +1,6 @@
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
-const session = require("express-session")
 
 // redis
 const redisClient = require("./redis")
@@ -58,4 +57,3 @@ io.on("connect", (socket) => {
 server.listen(3000, () =>
     console.log("Server listening http://localhost:3000 ")
 );
-

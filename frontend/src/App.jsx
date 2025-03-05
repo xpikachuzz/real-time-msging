@@ -5,10 +5,7 @@ import Views from "./components/Views";
 import { UserContext } from "./context/AccountContext";
 
 function App() {
-    const [count, setCount] = useState(0);
-
     localStorage.setItem("dark", true);
-    
 
     return (
         <UserContext>
