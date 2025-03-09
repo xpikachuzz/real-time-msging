@@ -45,7 +45,6 @@ io.use(authorizeUser)
 // then runs the server.j
 io.on("connect", (socket) => {
     initializeUser(socket);
-
     socket.on("add_friend", 
         (friendName, cb) => addFriend(socket, friendName, cb)
     )
